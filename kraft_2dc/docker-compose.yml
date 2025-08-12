@@ -1,0 +1,364 @@
+version: '3.5'
+
+networks:
+  dc1_net:
+    driver: bridge
+  dc2_net:
+    driver: bridge
+
+services:
+  # --- KRaft Controllers (Metadata Quorum) ---
+  kraft-controller-0:
+    image: confluentinc/cp-server:latest
+    container_name: kraft-controller-0
+    hostname: kraft-controller-0
+    restart: always
+    environment:
+      KAFKA_NODE_ID: 1000 # Unique ID for this controller
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller # This node is only a controller
+      KAFKA_LISTENERS: CONTROLLER://kraft-controller-0:9093 # Internal listener for controller communication
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-metadata # Dedicated storage for controller metadata
+      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1GB for metadata logs
+      KAFKA_LOG_RETENTION_HOURS: 168 # 7 days retention
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" # Disable for dev setup
+      KAFKA_METADATA_LOG_DIR: /tmp/kraft-metadata # Explicitly define metadata log dir for clarity
+      KAFKA_METADATA_LOG_SEGMENT_BYTES: 104857600 # 100MB segment size for metadata topic
+    volumes:
+      - ./confluent-data/kraft-controller-0:/tmp/kraft-metadata
+    networks:
+      - dc1_net
+      - dc2_net
+
+  kraft-controller-1:
+    image: confluentinc/cp-server:latest
+    container_name: kraft-controller-1
+    hostname: kraft-controller-1
+    restart: always
+    environment:
+      KAFKA_NODE_ID: 1001
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller
+      KAFKA_LISTENERS: CONTROLLER://kraft-controller-1:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-metadata
+      KAFKA_LOG_RETENTION_BYTES: 1073741824
+      KAFKA_LOG_RETENTION_HOURS: 168
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_METADATA_LOG_DIR: /tmp/kraft-metadata
+      KAFKA_METADATA_LOG_SEGMENT_BYTES: 104857600
+    volumes:
+      - ./confluent-data/kraft-controller-1:/tmp/kraft-metadata
+    networks:
+      - dc1_net
+      - dc2_net
+
+  kraft-controller-2:
+    image: confluentinc/cp-server:latest
+    container_name: kraft-controller-2
+    hostname: kraft-controller-2
+    restart: always
+    environment:
+      KAFKA_NODE_ID: 1002
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller
+      KAFKA_LISTENERS: CONTROLLER://kraft-controller-2:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-metadata
+      KAFKA_LOG_RETENTION_BYTES: 1073741824
+      KAFKA_LOG_RETENTION_HOURS: 168
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_METADATA_LOG_DIR: /tmp/kraft-metadata
+      KAFKA_METADATA_LOG_SEGMENT_BYTES: 104857600
+    volumes:
+      - ./confluent-data/kraft-controller-2:/tmp/kraft-metadata
+    networks:
+      - dc1_net
+      - dc2_net
+
+  kraft-controller-3:
+    image: confluentinc/cp-server:latest
+    container_name: kraft-controller-3
+    hostname: kraft-controller-3
+    restart: always
+    environment:
+      KAFKA_NODE_ID: 1003 # Unique ID for this controller
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller # This node is only a controller
+      KAFKA_LISTENERS: CONTROLLER://kraft-controller-3:9093 # Internal listener for controller communication
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-metadata # Dedicated storage for controller metadata
+      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1GB for metadata logs
+      KAFKA_LOG_RETENTION_HOURS: 168 # 7 days retention
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" # Disable for dev setup
+      KAFKA_METADATA_LOG_DIR: /tmp/kraft-metadata # Explicitly define metadata log dir for clarity
+      KAFKA_METADATA_LOG_SEGMENT_BYTES: 104857600 # 100MB segment size for metadata topic
+    volumes:
+      - ./confluent-data/kraft-controller-3:/tmp/kraft-metadata
+    networks:
+      - dc1_net
+      - dc2_net
+
+  kraft-controller-4:
+    image: confluentinc/cp-server:latest
+    container_name: kraft-controller-4
+    hostname: kraft-controller-4
+    restart: always
+    environment:
+      KAFKA_NODE_ID: 1004
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller
+      KAFKA_LISTENERS: CONTROLLER://kraft-controller-4:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-metadata
+      KAFKA_LOG_RETENTION_BYTES: 1073741824
+      KAFKA_LOG_RETENTION_HOURS: 168
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_METADATA_LOG_DIR: /tmp/kraft-metadata
+      KAFKA_METADATA_LOG_SEGMENT_BYTES: 104857600
+    volumes:
+      - ./confluent-data/kraft-controller-4:/tmp/kraft-metadata
+    networks:
+      - dc1_net
+      - dc2_net
+
+  kraft-controller-5:
+    image: confluentinc/cp-server:latest
+    container_name: kraft-controller-5
+    hostname: kraft-controller-5
+    restart: always
+    environment:
+      KAFKA_NODE_ID: 1005
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller
+      KAFKA_LISTENERS: CONTROLLER://kraft-controller-5:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-metadata
+      KAFKA_LOG_RETENTION_BYTES: 1073741824
+      KAFKA_LOG_RETENTION_HOURS: 168
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_METADATA_LOG_DIR: /tmp/kraft-metadata
+      KAFKA_METADATA_LOG_SEGMENT_BYTES: 104857600
+    volumes:
+      - ./confluent-data/kraft-controller-5:/tmp/kraft-metadata
+    networks:
+      - dc1_net
+      - dc2_net
+
+  # --- Kafka Brokers ---
+  broker-0:
+    image: confluentinc/cp-server:latest
+    container_name: broker-0
+    hostname: broker-0
+    restart: always
+    ports:
+      - "9092:9092" # Client connections to broker-0
+    environment:
+      KAFKA_NODE_ID: 0 # Unique ID for this broker
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: broker # This node is only a broker
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker-0:9092 # How external clients connect (map to a single host for simplicity)
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kafka-data # Dedicated storage for broker data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3 # Recommended for 3 brokers
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 3 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2 # Recommended (N/2 + 1)
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 3 # Confluent internal topics
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - ./confluent-data/broker-0:/tmp/kafka-data
+    depends_on:
+      - kraft-controller-0
+      - kraft-controller-1
+      - kraft-controller-2
+      - kraft-controller-3
+      - kraft-controller-4
+      - kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  broker-1:
+    image: confluentinc/cp-server:latest
+    container_name: broker-1
+    hostname: broker-1
+    restart: always
+    ports:
+      - "19092:19092" # Map to different host port to avoid conflict
+    environment:
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: broker
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker-1:19092 # Map to different host port
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kafka-data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - ./confluent-data/broker-1:/tmp/kafka-data
+    depends_on:
+      - kraft-controller-0
+      - kraft-controller-1
+      - kraft-controller-2
+      - kraft-controller-3
+      - kraft-controller-4
+      - kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  broker-2:
+    image: confluentinc/cp-server:latest
+    container_name: broker-2
+    hostname: broker-2
+    restart: always
+    ports:
+      - "29092:29092" # Map to different host port
+    environment:
+      KAFKA_NODE_ID: 2
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: broker
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker-2:29092 # Map to different host port
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kafka-data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - ./confluent-data/broker-2:/tmp/kafka-data
+    depends_on:
+      - kraft-controller-0
+      - kraft-controller-1
+      - kraft-controller-2
+      - kraft-controller-3
+      - kraft-controller-4
+      - kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  broker-3:
+    image: confluentinc/cp-server:latest
+    container_name: broker-3
+    hostname: broker-3
+    restart: always
+    ports:
+      - "39092:39092" # Client connections to broker-3
+    environment:
+      KAFKA_NODE_ID: 3 # Unique ID for this broker
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: broker # This node is only a broker
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker-3:39092 # How external clients connect (map to a single host for simplicity)
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kafka-data # Dedicated storage for broker data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3 # Recommended for 3 brokers
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 3 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2 # Recommended (N/2 + 1)
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 3 # Confluent internal topics
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - ./confluent-data/broker-3:/tmp/kafka-data
+    depends_on:
+      - kraft-controller-0
+      - kraft-controller-1
+      - kraft-controller-2
+      - kraft-controller-3
+      - kraft-controller-4
+      - kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  broker-4:
+    image: confluentinc/cp-server:latest
+    container_name: broker-4
+    hostname: broker-4
+    restart: always
+    ports:
+      - "49092:49092" # Map to different host port to avoid conflict
+    environment:
+      KAFKA_NODE_ID: 4
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: broker
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker-4:49092 # Map to different host port
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kafka-data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - ./confluent-data/broker-4:/tmp/kafka-data
+    depends_on:
+      - kraft-controller-0
+      - kraft-controller-1
+      - kraft-controller-2
+      - kraft-controller-3
+      - kraft-controller-4
+      - kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  broker-5:
+    image: confluentinc/cp-server:latest
+    container_name: broker-5
+    hostname: broker-5
+    restart: always
+    ports:
+      - "59092:59092" # Map to different host port
+    environment:
+      KAFKA_NODE_ID: 5
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: broker
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker-5:59092 # Map to different host port
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1000@kraft-controller-0:9093,1001@kraft-controller-1:9093,1002@kraft-controller-2:9093,1003@kraft-controller-3:9093,1004@kraft-controller-4:9093,1005@kraft-controller-5:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kafka-data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - ./confluent-data/broker-5:/tmp/kafka-data
+    depends_on:
+      - kraft-controller-0
+      - kraft-controller-1
+      - kraft-controller-2
+      - kraft-controller-3
+      - kraft-controller-4
+      - kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net

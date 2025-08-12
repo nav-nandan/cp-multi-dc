@@ -1,0 +1,354 @@
+version: '3.5'
+
+networks:
+  dc1_net:
+    driver: bridge
+  dc2_net:
+    driver: bridge
+  dc3_net:
+    driver: bridge
+
+services:
+  # Zookeeper nodes for Data Center 1
+  zookeeper1_dc1:
+    image: confluentinc/cp-zookeeper:7.9.2
+    container_name: zookeeper1_dc1
+    hostname: zookeeper1_dc1
+    restart: always
+    ports:
+      - 2181:2181
+      - 12888:12888
+      - 13888:13888
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_PEER_PORT: 12888
+      ZOOKEEPER_LEADER_PORT: 13888
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: -Dzookeeper.4lw.commands.whitelist=*
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_SERVERS: 'zookeeper1_dc1:12888:13888;zookeeper2_dc1:22888:23888;zookeeper3_dc2:32888:33888;zookeeper4_dc2:42888:43888;zookeeper5_dc3:52888:53888'
+      ZOOKEEPER_CFG_EXTRA: 'reconfigEnabled=true'
+    volumes:
+      - ./data/dc1/zookeeper1/data:/var/lib/zookeeper/data
+      - ./data/dc1/zookeeper1/log:/var/lib/zookeeper/log
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+  
+  zookeeper2_dc1:
+    image: confluentinc/cp-zookeeper:7.9.2
+    container_name: zookeeper2_dc1
+    hostname: zookeeper2_dc1
+    restart: always
+    ports:
+      - 2182:2182
+      - 22888:22888
+      - 23888:23888
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2182
+      ZOOKEEPER_PEER_PORT: 22888
+      ZOOKEEPER_LEADER_PORT: 23888
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: -Dzookeeper.4lw.commands.whitelist=*
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_SERVERS: 'zookeeper1_dc1:12888:13888;zookeeper2_dc1:22888:23888;zookeeper3_dc2:32888:33888;zookeeper4_dc2:42888:43888;zookeeper5_dc3:52888:53888'
+      ZOOKEEPER_CFG_EXTRA: 'reconfigEnabled=true'
+    volumes:
+      - ./data/dc1/zookeeper2/data:/var/lib/zookeeper/data
+      - ./data/dc1/zookeeper2/log:/var/lib/zookeeper/log
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+
+  zookeeper3_dc2:
+    image: confluentinc/cp-zookeeper:7.9.2
+    container_name: zookeeper3_dc2
+    hostname: zookeeper3_dc2
+    restart: always
+    ports:
+      - 2183:2183
+      - 32888:32888
+      - 33888:33888
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2183
+      ZOOKEEPER_PEER_PORT: 32888
+      ZOOKEEPER_LEADER_PORT: 33888
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: -Dzookeeper.4lw.commands.whitelist=*
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_SERVERS: 'zookeeper1_dc1:12888:13888;zookeeper2_dc1:22888:23888;zookeeper3_dc2:32888:33888;zookeeper4_dc2:42888:43888;zookeeper5_dc3:52888:53888'
+      ZOOKEEPER_CFG_EXTRA: 'reconfigEnabled=true'
+    volumes:
+      - ./data/dc1/zookeeper3/data:/var/lib/zookeeper/data
+      - ./data/dc1/zookeeper3/log:/var/lib/zookeeper/log
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+
+  # Zookeeper nodes for Data Center 2
+  zookeeper4_dc2:
+    image: confluentinc/cp-zookeeper:7.9.2
+    container_name: zookeeper4_dc2
+    hostname: zookeeper4_dc2
+    restart: always
+    ports:
+      - 2184:2184
+      - 42888:42888
+      - 43888:43888
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2184
+      ZOOKEEPER_PEER_PORT: 42888
+      ZOOKEEPER_LEADER_PORT: 43888
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: -Dzookeeper.4lw.commands.whitelist=*
+      ZOOKEEPER_SERVER_ID: 4
+      ZOOKEEPER_SERVERS: 'zookeeper1_dc1:12888:13888;zookeeper2_dc1:22888:23888;zookeeper3_dc2:32888:33888;zookeeper4_dc2:42888:43888;zookeeper5_dc3:52888:53888'
+      ZOOKEEPER_CFG_EXTRA: 'reconfigEnabled=true'
+    volumes:
+      - ./data/dc2/zookeeper4/data:/var/lib/zookeeper/data
+      - ./data/dc2/zookeeper4/log:/var/lib/zookeeper/log
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+
+  zookeeper5_dc3:
+    image: confluentinc/cp-zookeeper:7.9.2
+    container_name: zookeeper5_dc3
+    hostname: zookeeper5_dc3
+    restart: always
+    ports:
+      - 2185:2185
+      - 52888:52888
+      - 53888:53888
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2185
+      ZOOKEEPER_PEER_PORT: 52888
+      ZOOKEEPER_LEADER_PORT: 53888
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: -Dzookeeper.4lw.commands.whitelist=*
+      ZOOKEEPER_SERVER_ID: 5
+      ZOOKEEPER_SERVERS: 'zookeeper1_dc1:12888:13888;zookeeper2_dc1:22888:23888;zookeeper3_dc2:32888:33888;zookeeper4_dc2:42888:43888;zookeeper5_dc3:52888:53888'
+      ZOOKEEPER_CFG_EXTRA: 'reconfigEnabled=true'
+    volumes:
+      - ./data/dc2/zookeeper5/data:/var/lib/zookeeper/data
+      - ./data/dc2/zookeeper5/log:/var/lib/zookeeper/log
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+
+  # Kafka Brokers for Data Center 1
+  kafka1_dc1:
+    image: confluentinc/cp-server:7.9.2
+    container_name: kafka1_dc1
+    hostname: kafka1_dc1
+    restart: always
+    ports:
+      - "19092:19092"
+    depends_on:
+      - zookeeper1_dc1
+      - zookeeper2_dc1
+      - zookeeper3_dc2
+      - zookeeper4_dc2
+      - zookeeper5_dc3
+    environment:
+      KAFKA_BROKER_ID: 101
+      KAFKA_BROKER_RACK: 'dc1'
+      KAFKA_REPLICA_SELECTOR_CLASS: org.apache.kafka.common.replica.RackAwareReplicaSelector
+      KAFKA_CONFLUENT_LOG_PLACEMENT_CONSTRAINTS: '{"version": 1, "replicas": [{"count": 2, "constraints": {"rack": "dc1"}}, {"count": 2, "constraints": {"rack": "dc2"}}], "observers": [{"count": 1, "constraints": {"rack": "dc1"}}, {"count": 1, "constraints": {"rack": "dc2"}}]}'
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1_dc1:19092 # How external clients connect (map to a single host for simplicity)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # Recommended for 3 brokers
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 # Recommended (N/2 + 1)
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1 # Confluent internal topics
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1_dc1:2181,zookeeper2_dc1:2182,zookeeper3_dc2:2183,zookeeper4_dc2:2184,zookeeper5_dc3:2185
+    volumes:
+      - ./data/dc1/kafka1/data:/var/lib/kafka/data
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+
+  kafka2_dc1:
+    image: confluentinc/cp-server:7.9.2
+    container_name: kafka2_dc1
+    hostname: kafka2_dc1
+    restart: always
+    ports:
+      - "29092:29092"
+    depends_on:
+      - zookeeper1_dc1
+      - zookeeper2_dc1
+      - zookeeper3_dc2
+      - zookeeper4_dc2
+      - zookeeper5_dc3
+    environment:
+      KAFKA_BROKER_ID: 102
+      KAFKA_BROKER_RACK: 'dc1'
+      KAFKA_REPLICA_SELECTOR_CLASS: org.apache.kafka.common.replica.RackAwareReplicaSelector
+      KAFKA_CONFLUENT_LOG_PLACEMENT_CONSTRAINTS: '{"version": 1, "replicas": [{"count": 2, "constraints": {"rack": "dc1"}}, {"count": 2, "constraints": {"rack": "dc2"}}], "observers": [{"count": 1, "constraints": {"rack": "dc1"}}, {"count": 1, "constraints": {"rack": "dc2"}}]}'
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2_dc1:29092 # How external clients connect (map to a single host for simplicity)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # Recommended for 3 brokers
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 # Recommended (N/2 + 1)
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" 
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1 # Confluent internal topics
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1_dc1:2181,zookeeper2_dc1:2182,zookeeper3_dc2:2183,zookeeper4_dc2:2184,zookeeper5_dc3:2185
+    volumes:
+      - ./data/dc1/kafka2/data:/var/lib/kafka/data
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+
+  kafka3_dc1:
+    image: confluentinc/cp-server:7.9.2
+    container_name: kafka3_dc1
+    hostname: kafka3_dc1
+    restart: always
+    ports:
+      - "39092:39092"
+    depends_on:
+      - zookeeper1_dc1
+      - zookeeper2_dc1
+      - zookeeper3_dc2
+      - zookeeper4_dc2
+      - zookeeper5_dc3
+    environment:
+      KAFKA_BROKER_ID: 103
+      KAFKA_BROKER_RACK: 'dc1'
+      KAFKA_REPLICA_SELECTOR_CLASS: org.apache.kafka.common.replica.RackAwareReplicaSelector
+      KAFKA_CONFLUENT_LOG_PLACEMENT_CONSTRAINTS: '{"version": 1, "replicas": [{"count": 2, "constraints": {"rack": "dc1"}}, {"count": 2, "constraints": {"rack": "dc2"}}], "observers": [{"count": 1, "constraints": {"rack": "dc1"}}, {"count": 1, "constraints": {"rack": "dc2"}}]}'
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3_dc1:39092 # How external clients connect (map to a single host for simplicity)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # Recommended for 3 brokers
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 # Recommended (N/2 + 1)
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" 
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1 # Confluent internal topics
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1_dc1:2181,zookeeper2_dc1:2182,zookeeper3_dc2:2183,zookeeper4_dc2:2184,zookeeper5_dc3:2185
+    volumes:
+      - ./data/dc1/kafka3/data:/var/lib/kafka/data
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+
+  # Kafka Brokers for Data Center 2
+  kafka4_dc2:
+    image: confluentinc/cp-server:7.9.2
+    container_name: kafka4_dc2
+    hostname: kafka4_dc2
+    restart: always
+    ports:
+      - "49092:49092"
+    depends_on:
+      - zookeeper1_dc1
+      - zookeeper2_dc1
+      - zookeeper3_dc2
+      - zookeeper4_dc2
+      - zookeeper5_dc3
+    environment:
+      KAFKA_BROKER_ID: 201
+      KAFKA_BROKER_RACK: 'dc2'
+      KAFKA_REPLICA_SELECTOR_CLASS: org.apache.kafka.common.replica.RackAwareReplicaSelector
+      KAFKA_CONFLUENT_LOG_PLACEMENT_CONSTRAINTS: '{"version": 1, "replicas": [{"count": 2, "constraints": {"rack": "dc1"}}, {"count": 2, "constraints": {"rack": "dc2"}}], "observers": [{"count": 1, "constraints": {"rack": "dc1"}}, {"count": 1, "constraints": {"rack": "dc2"}}]}'
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka4_dc2:49092 # How external clients connect (map to a single host for simplicity)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # Recommended for 3 brokers
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 # Recommended (N/2 + 1)
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" 
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1 # Confluent internal topics
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1_dc1:2181,zookeeper2_dc1:2182,zookeeper3_dc2:2183,zookeeper4_dc2:2184,zookeeper5_dc3:2185
+    volumes:
+      - ./data/dc2/kafka4/data:/var/lib/kafka/data
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+
+  kafka5_dc2:
+    image: confluentinc/cp-server:7.9.2
+    container_name: kafka5_dc2
+    hostname: kafka5_dc2
+    restart: always
+    ports:
+      - "59092:59092"
+    depends_on:
+      - zookeeper1_dc1
+      - zookeeper2_dc1
+      - zookeeper3_dc2
+      - zookeeper4_dc2
+      - zookeeper5_dc3
+    environment:
+      KAFKA_BROKER_ID: 202
+      KAFKA_BROKER_RACK: 'dc2'
+      KAFKA_REPLICA_SELECTOR_CLASS: org.apache.kafka.common.replica.RackAwareReplicaSelector
+      KAFKA_CONFLUENT_LOG_PLACEMENT_CONSTRAINTS: '{"version": 1, "replicas": [{"count": 2, "constraints": {"rack": "dc1"}}, {"count": 2, "constraints": {"rack": "dc2"}}], "observers": [{"count": 1, "constraints": {"rack": "dc1"}}, {"count": 1, "constraints": {"rack": "dc2"}}]}'
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka5_dc2:59092 # How external clients connect (map to a single host for simplicity)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # Recommended for 3 brokers
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 # Recommended (N/2 + 1)
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" 
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1 # Confluent internal topics
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1_dc1:2181,zookeeper2_dc1:2182,zookeeper3_dc2:2183,zookeeper4_dc2:2184,zookeeper5_dc3:2185
+    volumes:
+      - ./data/dc2/kafka5/data:/var/lib/kafka/data
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net
+      
+  kafka6_dc2:
+    image: confluentinc/cp-server:7.9.2
+    container_name: kafka6_dc2
+    hostname: kafka6_dc2
+    restart: always
+    ports:
+      - "9096:9096"
+    depends_on:
+      - zookeeper1_dc1
+      - zookeeper2_dc1
+      - zookeeper3_dc2
+      - zookeeper4_dc2
+      - zookeeper5_dc3
+    environment:
+      KAFKA_BROKER_ID: 203
+      KAFKA_BROKER_RACK: 'dc2'
+      KAFKA_REPLICA_SELECTOR_CLASS: org.apache.kafka.common.replica.RackAwareReplicaSelector
+      KAFKA_CONFLUENT_LOG_PLACEMENT_CONSTRAINTS: '{"version": 1, "replicas": [{"count": 2, "constraints": {"rack": "dc1"}}, {"count": 2, "constraints": {"rack": "dc2"}}], "observers": [{"count": 1, "constraints": {"rack": "dc1"}}, {"count": 1, "constraints": {"rack": "dc2"}}]}'
+      CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka6_dc2:9096 # How external clients connect (map to a single host for simplicity)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # Recommended for 3 brokers
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1 # Recommended
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 # Recommended (N/2 + 1)
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" 
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1 # Confluent internal topics
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1_dc1:2181,zookeeper2_dc1:2182,zookeeper3_dc2:2183,zookeeper4_dc2:2184,zookeeper5_dc3:2185
+    volumes:
+      - ./data/dc2/kafka6/data:/var/lib/kafka/data
+    networks:
+      - dc1_net
+      - dc2_net
+      - dc3_net

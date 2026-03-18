@@ -1,0 +1,648 @@
+networks:
+  dc1_net:
+    driver: bridge
+  dc2_net:
+    driver: bridge
+
+services:
+  # --- KRaft Controllers (Metadata Quorum) ---
+  dc1-kraft-controller-0:
+    image: confluentinc/cp-server:latest
+    container_name: dc1-kraft-controller-0
+    hostname: dc1-kraft-controller-0
+    restart: always
+    ports:
+      - "9093:9093"
+    environment:
+      KAFKA_NODE_ID: 1000 # Unique ID for this controller
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller # This node is only a controller
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:9093 # Internal listener for controller communication
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc1-kraft-controller-0/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc1-kraft-controller-0/data
+      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1GB for metadata logs
+      KAFKA_LOG_RETENTION_HOURS: 168 # 7 days retention
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" # Disable for dev setup
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+        --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+        --standalone \
+        --feature kraft.version=1 \
+        --ignore-formatted \
+        --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties \
+      '
+    volumes:
+      - ./confluent-data/dc1-kraft-controller-0:/var/lib/kafka/dc1-kraft-controller-0
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc1-kraft-controller-1:
+    image: confluentinc/cp-server:latest
+    container_name: dc1-kraft-controller-1
+    hostname: dc1-kraft-controller-1
+    restart: always
+    ports:
+      - "19093:19093"
+    environment:
+      KAFKA_NODE_ID: 1001 # Unique ID for this controller
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller # This node is only a controller
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:19093 # Internal listener for controller communication
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc1-kraft-controller-1/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc1-kraft-controller-1/data
+      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1GB for metadata logs
+      KAFKA_LOG_RETENTION_HOURS: 168 # 7 days retention
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" # Disable for dev setup
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+        --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+        --no-initial-controllers \
+        --feature kraft.version=1 \
+        --ignore-formatted \
+        --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties \
+      '
+    volumes:
+      - ./confluent-data/dc1-kraft-controller-1:/var/lib/kafka/dc1-kraft-controller-1
+    depends_on:
+      - dc1-kraft-controller-0
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc1-kraft-controller-2:
+    image: confluentinc/cp-server:latest
+    container_name: dc1-kraft-controller-2
+    hostname: dc1-kraft-controller-2
+    restart: always
+    ports:
+      - "29093:29093"
+    environment:
+      KAFKA_NODE_ID: 1002 # Unique ID for this controller
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller # This node is only a controller
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:29093 # Internal listener for controller communication
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc1-kraft-controller-2/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc1-kraft-controller-2/data
+      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1GB for metadata logs
+      KAFKA_LOG_RETENTION_HOURS: 168 # 7 days retention
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" # Disable for dev setup
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+        --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+        --no-initial-controllers \
+        --feature kraft.version=1 \
+        --ignore-formatted \
+        --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties \
+      '
+    volumes:
+      - ./confluent-data/dc1-kraft-controller-2:/var/lib/kafka/dc1-kraft-controller-2
+    depends_on:
+      - dc1-kraft-controller-0
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc2-kraft-controller-3:
+    image: confluentinc/cp-server:latest
+    container_name: dc2-kraft-controller-3
+    hostname: dc2-kraft-controller-3
+    restart: always
+    ports:
+      - "39093:39093"
+    environment:
+      KAFKA_NODE_ID: 1003 # Unique ID for this controller
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller # This node is only a controller
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:39093 # Internal listener for controller communication
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc2-kraft-controller-3/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc2-kraft-controller-3/data
+      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1GB for metadata logs
+      KAFKA_LOG_RETENTION_HOURS: 168 # 7 days retention
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" # Disable for dev setup
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+        --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+        --no-initial-controllers \
+        --feature kraft.version=1 \
+        --ignore-formatted \
+        --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties \
+      '
+    volumes:
+      - ./confluent-data/dc2-kraft-controller-3:/var/lib/kafka/dc2-kraft-controller-3
+    depends_on:
+      - dc1-kraft-controller-0
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc2-kraft-controller-4:
+    image: confluentinc/cp-server:latest
+    container_name: dc2-kraft-controller-4
+    hostname: dc2-kraft-controller-4
+    restart: always
+    ports:
+      - "49093:49093"
+    environment:
+      KAFKA_NODE_ID: 1004 # Unique ID for this controller
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller # This node is only a controller
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:49093 # Internal listener for controller communication
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc2-kraft-controller-4/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc2-kraft-controller-4/data
+      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1GB for metadata logs
+      KAFKA_LOG_RETENTION_HOURS: 168 # 7 days retention
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" # Disable for dev setup
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+        --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+        --no-initial-controllers \
+        --feature kraft.version=1 \
+        --ignore-formatted \
+        --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties \
+      '
+    volumes:
+      - ./confluent-data/dc2-kraft-controller-4:/var/lib/kafka/dc2-kraft-controller-4
+    depends_on:
+      - dc1-kraft-controller-0
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc2-kraft-controller-5:
+    image: confluentinc/cp-server:latest
+    container_name: dc2-kraft-controller-5
+    hostname: dc2-kraft-controller-5
+    restart: always
+    ports:
+      - "59093:59093"
+    environment:
+      KAFKA_NODE_ID: 1005 # Unique ID for this controller
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA" # Replace with your desired 22-character base64-encoded ID
+      KAFKA_PROCESS_ROLES: controller # This node is only a controller
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:59093 # Internal listener for controller communication
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc2-kraft-controller-5/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc2-kraft-controller-5/data
+      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1GB for metadata logs
+      KAFKA_LOG_RETENTION_HOURS: 168 # 7 days retention
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" # Disable for dev setup
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+        --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+        --no-initial-controllers \
+        --feature kraft.version=1 \
+        --ignore-formatted \
+        --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties \
+      '
+    volumes:
+      - ./confluent-data/dc2-kraft-controller-5:/var/lib/kafka/dc2-kraft-controller-5
+    depends_on:
+      - dc1-kraft-controller-0
+    networks:
+      - dc1_net
+      - dc2_net
+
+  # --- Kafka Brokers ---
+  dc1-broker-0:
+    image: confluentinc/cp-server:latest
+    container_name: dc1-broker-0
+    hostname: dc1-broker-0
+    restart: always
+    ports:
+      - "9092:9092" # Client connections to broker-0
+    environment:
+      KAFKA_BROKER_RACK: dc1
+      KAFKA_NODE_ID: "100"
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA"
+
+      KAFKA_PROCESS_ROLES: "broker"
+
+      # Listeners
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://dc1-broker-0:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # KRaft quorum
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+
+      # Logs
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc1-broker-0/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc1-broker-0/data
+
+      # Internal topics
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 3
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 6
+
+      KAFKA_MIN_INSYNC_REPLICAS: "3"
+
+      # Disable telemetry/metrics for dev
+      KAFKA_CONFLUENT_TELEMETRY_ENABLE: "false"
+      CONFLUENT_METRICS_ENABLE: "false"
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+          --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+          --feature kraft.version=1 \
+          --ignore-formatted \
+          --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties
+      '
+    volumes:
+      - ./confluent-data/dc1-broker-0:/var/lib/kafka/dc1-broker-0
+    depends_on:
+      - dc1-kraft-controller-0
+      - dc1-kraft-controller-1
+      - dc1-kraft-controller-2
+      - dc2-kraft-controller-3
+      - dc2-kraft-controller-4
+      - dc2-kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc1-broker-1:
+    image: confluentinc/cp-server:latest
+    container_name: dc1-broker-1
+    hostname: dc1-broker-1
+    restart: always
+    ports:
+      - "19092:19092" # Map to different host port to avoid conflict
+    environment:
+      KAFKA_BROKER_RACK: dc1
+      KAFKA_NODE_ID: "101"
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA"
+
+      KAFKA_PROCESS_ROLES: "broker"
+
+      # Listeners
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:19092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://dc1-broker-1:19092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # KRaft quorum
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+
+      # Logs
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc1-broker-1/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc1-broker-1/data
+
+      # Internal topics
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 3
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 6
+
+      KAFKA_MIN_INSYNC_REPLICAS: "3"
+
+      # Disable telemetry/metrics for dev
+      KAFKA_CONFLUENT_TELEMETRY_ENABLE: "false"
+      CONFLUENT_METRICS_ENABLE: "false"
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+          --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+          --feature kraft.version=1 \
+          --ignore-formatted \
+          --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties
+      '
+    volumes:
+      - ./confluent-data/dc1-broker-1:/var/lib/kafka/dc1-broker-1
+    depends_on:
+      - dc1-kraft-controller-0
+      - dc1-kraft-controller-1
+      - dc1-kraft-controller-2
+      - dc2-kraft-controller-3
+      - dc2-kraft-controller-4
+      - dc2-kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc1-broker-2:
+    image: confluentinc/cp-server:latest
+    container_name: dc1-broker-2
+    hostname: dc1-broker-2
+    restart: always
+    ports:
+      - "29092:29092" # Map to different host port
+    environment:
+      KAFKA_BROKER_RACK: dc1
+      KAFKA_NODE_ID: "102"
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA"
+
+      KAFKA_PROCESS_ROLES: "broker"
+
+      # Listeners
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:29092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://dc1-broker-2:29092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # KRaft quorum
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+
+      # Logs
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc1-broker-2/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc1-broker-2/data
+
+      # Internal topics
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 3
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 6
+
+      KAFKA_MIN_INSYNC_REPLICAS: "3"
+
+      # Disable telemetry/metrics for dev
+      KAFKA_CONFLUENT_TELEMETRY_ENABLE: "false"
+      CONFLUENT_METRICS_ENABLE: "false"
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+          --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+          --feature kraft.version=1 \
+          --ignore-formatted \
+          --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties
+      '
+    volumes:
+      - ./confluent-data/dc1-broker-2:/var/lib/kafka/dc1-broker-2
+    depends_on:
+      - dc1-kraft-controller-0
+      - dc1-kraft-controller-1
+      - dc1-kraft-controller-2
+      - dc2-kraft-controller-3
+      - dc2-kraft-controller-4
+      - dc2-kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc2-broker-3:
+    image: confluentinc/cp-server:latest
+    container_name: dc2-broker-3
+    hostname: dc2-broker-3
+    restart: always
+    ports:
+      - "39092:39092" # Client connections to broker-3
+    environment:
+      KAFKA_BROKER_RACK: dc2
+      KAFKA_NODE_ID: "103"
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA"
+
+      KAFKA_PROCESS_ROLES: "broker"
+
+      # Listeners
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:39092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://dc2-broker-3:39092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # KRaft quorum
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+
+      # Logs
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc2-broker-3/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc2-broker-3/data
+
+      # Internal topics
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 3
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 6
+
+      KAFKA_MIN_INSYNC_REPLICAS: "3"
+
+      # Disable telemetry/metrics for dev
+      KAFKA_CONFLUENT_TELEMETRY_ENABLE: "false"
+      CONFLUENT_METRICS_ENABLE: "false"
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+          --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+          --feature kraft.version=1 \
+          --ignore-formatted \
+          --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties
+      '
+    volumes:
+      - ./confluent-data/dc2-broker-3:/var/lib/kafka/dc2-broker-3
+    depends_on:
+      - dc1-kraft-controller-0
+      - dc1-kraft-controller-1
+      - dc1-kraft-controller-2
+      - dc2-kraft-controller-3
+      - dc2-kraft-controller-4
+      - dc2-kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc2-broker-4:
+    image: confluentinc/cp-server:latest
+    container_name: dc2-broker-4
+    hostname: dc2-broker-4
+    restart: always
+    ports:
+      - "49092:49092" # Map to different host port to avoid conflict
+    environment:
+      KAFKA_BROKER_RACK: dc2
+      KAFKA_NODE_ID: "104"
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA"
+
+      KAFKA_PROCESS_ROLES: "broker"
+
+      # Listeners
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:49092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://dc2-broker-4:49092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # KRaft quorum
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+
+      # Logs
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc2-broker-4/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc2-broker-4/data
+
+      # Internal topics
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 3
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 6
+
+      KAFKA_MIN_INSYNC_REPLICAS: "3"
+
+      # Disable telemetry/metrics for dev
+      KAFKA_CONFLUENT_TELEMETRY_ENABLE: "false"
+      CONFLUENT_METRICS_ENABLE: "false"
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+          --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+          --feature kraft.version=1 \
+          --ignore-formatted \
+          --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties
+      ' 
+    volumes:
+      - ./confluent-data/dc2-broker-4:/var/lib/kafka/dc2-broker-4
+    depends_on:
+      - dc1-kraft-controller-0
+      - dc1-kraft-controller-1
+      - dc1-kraft-controller-2
+      - dc2-kraft-controller-3
+      - dc2-kraft-controller-4
+      - dc2-kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
+
+  dc2-broker-5:
+    image: confluentinc/cp-server:latest
+    container_name: dc2-broker-5
+    hostname: dc2-broker-5
+    restart: always
+    ports:
+      - "59092:59092" # Map to different host port
+    environment:
+      KAFKA_BROKER_RACK: dc2
+      KAFKA_NODE_ID: "105"
+      KAFKA_CLUSTER_ID: "4kG3iB-T_eG0g6mOa0aEBA"
+
+      KAFKA_PROCESS_ROLES: "broker"
+
+      # Listeners
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:59092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://dc2-broker-5:59092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # KRaft quorum
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_BOOTSTRAP_SERVERS: dc1-kraft-controller-0:9093,dc1-kraft-controller-1:19093,dc1-kraft-controller-2:29093,dc2-kraft-controller-3:39093,dc2-kraft-controller-4:49093,dc2-kraft-controller-5:59093
+
+      # Logs
+      KAFKA_METADATA_LOG_DIR: /var/lib/kafka/dc2-broker-5/metadata
+      KAFKA_LOG_DIRS: /var/lib/kafka/dc2-broker-5/data
+
+      # Internal topics
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_GROUP_INITIAL_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 6
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 3
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 6
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 6
+
+      KAFKA_MIN_INSYNC_REPLICAS: "3"
+
+      # Disable telemetry/metrics for dev
+      KAFKA_CONFLUENT_TELEMETRY_ENABLE: "false"
+      CONFLUENT_METRICS_ENABLE: "false"
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+
+    command: >
+      bash -c '
+        /etc/confluent/docker/configure &&
+        cp /etc/kafka/kafka.properties /etc/kafka/server.properties &&
+        kafka-storage format \
+          --cluster-id=4kG3iB-T_eG0g6mOa0aEBA \
+          --feature kraft.version=1 \
+          --ignore-formatted \
+          --config /etc/kafka/server.properties &&
+        kafka-server-start /etc/kafka/server.properties
+      '
+    volumes:
+      - ./confluent-data/dc2-broker-5:/var/lib/kafka/dc2-broker-5
+    depends_on:
+      - dc1-kraft-controller-0
+      - dc1-kraft-controller-1
+      - dc1-kraft-controller-2
+      - dc2-kraft-controller-3
+      - dc2-kraft-controller-4
+      - dc2-kraft-controller-5
+    networks:
+      - dc1_net
+      - dc2_net
